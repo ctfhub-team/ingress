@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package ctfhub.ingress.v1;
+
+import "google/api/annotations.proto";
+
+message Empty {}
+message NameReq { string name = 1; }
+message NamesReq { repeated string name = 1; }
+message ListReq { optional string name = 1; }
+message PortReq { repeated int64 num = 1; }
+message PortRsp { repeated int64 port = 1; }
+message Proxy {
+  string name = 1;
+  string protocol = 2;
+  string pub_host = 3;
+  int64 pub_port = 4;
+  string pri_host = 5;
+  int64 pri_port = 6;
+}
+message CreateReq { repeated Proxy proxy = 1; }
+message InspectRsp { repeated Proxy proxys = 1; }
+message ProxiesRsp {
+  int64 count = 1;
+  repeated Proxy proxies = 2;
+}
+
+service Ingress {
+
+  rpc Port(PortReq) returns (PortRsp) {
+    option (google.api.http) = {
+      post : "/v1/port"
+      body : "*"
+    };
+  }
+  rpc Create(CreateReq) returns (Empty) {
+    option (google.api.http) = {
+      post : "/v1/create"
+      body : "*"
+    };
+  }
+  rpc Remove(NamesReq) returns (Empty) {
+    option (google.api.http) = {
+      post : "/v1/remove"
+      body : "*"
+    };
+  }
+  rpc Inspect(NamesReq) returns (InspectRsp) {
+    option (google.api.http) = {
+      post : "/v1/inspect"
+      body : "*"
+    };
+  }
+  rpc Proxies(ListReq) returns (ProxiesRsp) {
+    option (google.api.http) = {
+      post : "/v1/proxies"
+      body : "*"
+    };
+  }
+}
